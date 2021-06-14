@@ -5,13 +5,29 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type User struct {
+type TableClass struct {
 	gorm.Model
-	Name string `gorm:"primary_key;column:user_name;type:varchar(100)"`
+	ClassName string
+	Students  []TableStudent
 }
 
-func (u User) TableName() string {
-	return "table_users"
+type TableStudent struct {
+	gorm.Model
+	StudentName string
+	ClassId     uint
+	IdCard      TableIdCard
+	Teachers    []TableTeacher `gorm:"many2many:table_student_teacher;"`
+}
+
+type TableIdCard struct {
+	gorm.Model
+	Num int
+}
+
+type TableTeacher struct {
+	gorm.Model
+	TeacherName string
+	Students    []TableStudent `gorm:"many2many:table_student_teacher;"`
 }
 
 func main() {
@@ -20,9 +36,24 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&TableStudent{}, &TableTeacher{}, &TableIdCard{}, &TableClass{})
 
-	//fmt.Println(hello)
-
+	i := TableIdCard{
+		Num: 123456,
+	}
+	s := TableStudent{
+		StudentName: "卢强波",
+		IdCard:      i,
+	}
+	t := TableTeacher{
+		TeacherName: "老师李",
+		Students:    []TableStudent{s},
+	}
+	c := TableClass{
+		ClassName: "三年二班",
+		Students:  []TableStudent{s},
+	}
+	_ = db.Create(&c).Error
+	_ = db.Create(&t).Error
 	defer db.Close()
 }
