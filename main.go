@@ -1,60 +1,58 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
+	"net/http"
+	"time"
 )
 
-type TableClass struct {
-	gorm.Model
-	ClassName string
-	Students  []TableStudent
+type commonModelFields struct {
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }
 
-type TableStudent struct {
-	gorm.Model
-	StudentName string
-	ClassId     uint
-	Card        TableCard
-	Teachers    []TableTeacher `gorm:"many2many:table_student_teacher;"`
-}
-
-type TableCard struct {
-	gorm.Model
-	Num       int
-	StudentId uint
-}
-
-type TableTeacher struct {
-	gorm.Model
-	TeacherName string
-	Students    []TableStudent `gorm:"many2many:table_student_teacher;"`
+type User struct {
+	commonModelFields
+	Name     string    `json:"name"`
+	Age      int       `json:"age"`
+	Birthday time.Time `json:"birthday"`
 }
 
 func main() {
 	dsn := "root:Aa123456@tcp(104.128.94.5:3306)/go_class?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open("mysql", dsn)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Error),
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix:   "t_", // 表名前缀，`User`表为`t_users`
+			SingularTable: true, // 使用单数表名，启用该选项后，`User` 表将是`user`
+		},
+	})
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&TableStudent{}, &TableTeacher{}, &TableCard{}, &TableClass{})
-
-	defer db.Close()
+	db.AutoMigrate(&User{})
 	r := gin.Default()
 	// 创建
 	r.POST("/student", func(c *gin.Context) {
-		var student TableStudent
-		_ = c.BindJSON(&student)
-		db.Create(&student)
-	})
-	r.GET("/student/:id", func(c *gin.Context) {
-		id := c.Param("id")
-		var student TableStudent
-		_ = c.BindJSON(&student)
-		db.Preload("Teachers").Preload("Card").Where("id = ?", id).First(&student)
+		user := User{Name: "Jinzhu", Age: 18, Birthday: time.Now()}
+		result := db.Create(&user)
+		fmt.Println(result)
+		fmt.Println(user)
 		c.JSON(200, gin.H{
-			"s": student,
+			"code": user,
+		})
+	})
+	r.GET("/student", func(c *gin.Context) {
+
+		c.JSON(http.StatusOK, gin.H{
+			"code": 111,
 		})
 	})
 	r.Run(":1001")
