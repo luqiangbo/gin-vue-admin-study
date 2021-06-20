@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"goClass/model/request"
-	"net/http"
+	"goClass/model/response"
+	"goClass/utils"
 )
 
 func Login(c *gin.Context) {
 	var l request.Login
 	_ = c.ShouldBindJSON(&l)
+	if err := utils.Verify(l, utils.LoginVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	fmt.Println("api", l)
-	c.JSON(http.StatusOK, l)
+	response.Ok(c)
 }
