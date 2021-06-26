@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 	"go.uber.org/zap"
 	"goClass/global"
 	"goClass/middleware"
@@ -77,5 +78,35 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 		}, "登录成功", c)
 		return
 	}
-
+	if err, jwtStr := service.GetRedisJWT(user.Username); err == redis.Nil {
+		if err := service.SetRedisJWT(token, user.Username); err != nil {
+			global.GVA_LOG.Error("设置登录状态失败!", zap.Any("err", err))
+			response.FailWithMessage("设置登录状态失败", c)
+			return
+		}
+		response.OkWithDetailed(response.LoginResponse{
+			User:      user,
+			Token:     token,
+			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
+		}, "登录成功", c)
+	} else if err != nil {
+		global.GVA_LOG.Error("设置登录状态失败!", zap.Any("err", err))
+		response.FailWithMessage("设置登录状态失败", c)
+	} else {
+		var blackJWT model.JwtBlacklist
+		blackJWT.Jwt = jwtStr
+		if err := service.JsonInBlacklist(blackJWT); err != nil {
+			response.FailWithMessage("jwt作废失败", c)
+			return
+		}
+		if err := service.SetRedisJWT(token, user.Username); err != nil {
+			response.FailWithMessage("设置登录状态失败", c)
+			return
+		}
+		response.OkWithDetailed(response.LoginResponse{
+			User:      user,
+			Token:     token,
+			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
+		}, "登录成功", c)
+	}
 }

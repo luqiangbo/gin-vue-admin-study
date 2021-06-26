@@ -6,7 +6,7 @@ system:
   env: 'public'  # Change to "develop" to skip authentication for development mode
   addr: 8081
   db-type: 'mysql'
-  use-multipoint: false
+  use-multipoint: true
 zap:
   level: 'info'
   format: 'console'
@@ -28,3 +28,7 @@ mysql:
   max-open-conns: 100
   log-mode: false
   log-zap: ""
+redis:
+  db: 0
+  addr: '104.128.94.5:6379'
+  password: '12306'
