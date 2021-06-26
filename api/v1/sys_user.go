@@ -1,14 +1,17 @@
 package v1
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"goClass/global"
+	"goClass/middleware"
 	"goClass/model"
 	"goClass/model/request"
 	"goClass/model/response"
 	"goClass/service"
 	"goClass/utils"
+	"time"
 )
 
 func Register(c *gin.Context) {
@@ -46,8 +49,33 @@ func Login(c *gin.Context) {
 }
 
 func tokenNext(c *gin.Context, user model.SysUser) {
-	response.OkWithData(response.LoginResponse{
-		User:  user,
-		Token: "123",
-	}, c)
+	j := &middleware.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)}
+
+	claims := request.CustomClaims{
+		UUID:       user.UUID,
+		ID:         user.ID,
+		NickName:   user.NickName,
+		Username:   user.Username,
+		BufferTime: global.GVA_CONFIG.JWT.BufferTime,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix() - 1000,                              // 签名生效时间
+			ExpiresAt: time.Now().Unix() + global.GVA_CONFIG.JWT.ExpiresTime, // 过期时间 7天  配置文件
+			Issuer:    "can",                                                 // 签名的发行者
+		},
+	}
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		global.GVA_LOG.Error("获取token失败!", zap.Any("err", err))
+		response.FailWithMessage("获取token失败", c)
+		return
+	}
+	if !global.GVA_CONFIG.System.UseMultipoint {
+		response.OkWithDetailed(response.LoginResponse{
+			User:      user,
+			Token:     token,
+			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
+		}, "登录成功", c)
+		return
+	}
+
 }

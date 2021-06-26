@@ -1,7 +1,12 @@
+jwt:
+  signing-key: 'can'
+  expires-time: 604800
+  buffer-time: 86400
 system:
   env: 'public'  # Change to "develop" to skip authentication for development mode
   addr: 8081
   db-type: 'mysql'
+  use-multipoint: false
 zap:
   level: 'info'
   format: 'console'
