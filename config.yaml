@@ -5,10 +5,21 @@ system:
 zap:
   level: 'info'
   format: 'console'
-  prefix: '[GIN-VUE-ADMIN]'
+  prefix: '[GO-CLASS]'
   director: 'log'
   link-name: 'latest_log'
   show-line: true
   encode-level: 'LowercaseColorLevelEncoder'
   stacktrace-key: 'stacktrace'
   log-in-console: true
+
+mysql:
+  path: '104.128.94.5:3306'
+  config: 'charset=utf8mb4&parseTime=True&loc=Local'
+  db-name: 'go_class'
+  username: 'root'
+  password: 'Aa123456'
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: false
+  log-zap: ""

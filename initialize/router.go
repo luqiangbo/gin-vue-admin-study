@@ -14,5 +14,9 @@ func Routers() *gin.Engine {
 	{
 		router.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
 	}
+	PrivateGroup := Router.Group("")
+	{
+		router.InitUserRouter(PrivateGroup) // 注册功能api路由
+	}
 	return Router
 }
