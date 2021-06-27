@@ -9,6 +9,7 @@ import (
 func InitUserRouter(Router *gin.RouterGroup) {
 	UserRouter := Router.Group("user").Use(middleware.OperationRecord())
 	{
-		UserRouter.POST("register", v1.Register) // 用户注册账号
+		UserRouter.POST("register", v1.Register)              // 用户注册账号
+		UserRouter.POST("change_password", v1.ChangePassword) // 用户修改密码
 	}
 }

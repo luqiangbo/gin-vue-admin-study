@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+// 注册
+
 func Register(c *gin.Context) {
 	var req request.Register
 	_ = c.ShouldBindJSON(&req)
@@ -31,6 +33,8 @@ func Register(c *gin.Context) {
 		response.OkWithDetailed(response.SysUserResponse{User: userReturn}, "注册成功", c)
 	}
 }
+
+// 登录
 
 func Login(c *gin.Context) {
 	var req request.Login
@@ -49,6 +53,7 @@ func Login(c *gin.Context) {
 	}
 }
 
+// 获取token
 func tokenNext(c *gin.Context, user model.SysUser) {
 	j := &middleware.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)}
 
@@ -111,5 +116,23 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
 		}, "登录成功3", c)
+	}
+}
+
+// 修改密码
+
+func ChangePassword(c *gin.Context) {
+	var req request.ChangePassword
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.ChangePasswordVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	u := &model.SysUser{Username: req.Username, Password: req.Password}
+	if err, _ := service.ChangePassword(u, req.NewPassword); err != nil {
+		global.GVA_LOG.Error("修改失败!", zap.Any("err", err))
+		response.FailWithMessage("修改失败 , 原密码与当前账户不符", c)
+	} else {
+		response.OkWithMessage("修改成功", c)
 	}
 }

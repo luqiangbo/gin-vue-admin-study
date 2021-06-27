@@ -1,14 +1,23 @@
 package service
 
 import (
+	"errors"
 	"goClass/global"
 	"goClass/model"
+	"gorm.io/gorm"
 	"time"
 )
 
 func JsonInBlacklist(jwtList model.JwtBlacklist) (err error) {
 	err = global.GVA_DB.Create(&jwtList).Error
 	return
+}
+
+func IsBlacklist(jwt string) bool {
+	err := global.GVA_DB.Where("jwt = ?", jwt).First(&model.JwtBlacklist{}).Error
+	isNotFound := errors.Is(err, gorm.ErrRecordNotFound)
+	return !isNotFound
+
 }
 
 func GetRedisJWT(username string) (err error, redisJWT string) {
