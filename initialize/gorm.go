@@ -27,6 +27,7 @@ func MysqlTables(db *gorm.DB) {
 	err := db.AutoMigrate(
 		model.SysUser{},
 		model.SysOperationRecord{},
+		model.JwtBlacklist{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))

@@ -78,35 +78,38 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 		}, "登录成功", c)
 		return
 	}
+	// 根据用户名去redis拿取token
 	if err, jwtStr := service.GetRedisJWT(user.Username); err == redis.Nil {
+		//没找到 就存储
 		if err := service.SetRedisJWT(token, user.Username); err != nil {
-			global.GVA_LOG.Error("设置登录状态失败!", zap.Any("err", err))
-			response.FailWithMessage("设置登录状态失败", c)
+			global.GVA_LOG.Error("设置登录状态失败1!", zap.Any("err", err))
+			response.FailWithMessage("设置登录状态失败1", c)
 			return
 		}
+		//存储成功
 		response.OkWithDetailed(response.LoginResponse{
 			User:      user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
-		}, "登录成功", c)
+		}, "登录成功1", c)
 	} else if err != nil {
-		global.GVA_LOG.Error("设置登录状态失败!", zap.Any("err", err))
-		response.FailWithMessage("设置登录状态失败", c)
+		global.GVA_LOG.Error("设置登录状态失败2!", zap.Any("err", err))
+		response.FailWithMessage("设置登录状态失败2", c)
 	} else {
 		var blackJWT model.JwtBlacklist
 		blackJWT.Jwt = jwtStr
 		if err := service.JsonInBlacklist(blackJWT); err != nil {
-			response.FailWithMessage("jwt作废失败", c)
+			response.FailWithMessage("jwt作废失败3", c)
 			return
 		}
 		if err := service.SetRedisJWT(token, user.Username); err != nil {
-			response.FailWithMessage("设置登录状态失败", c)
+			response.FailWithMessage("设置登录状态失败3", c)
 			return
 		}
 		response.OkWithDetailed(response.LoginResponse{
 			User:      user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
-		}, "登录成功", c)
+		}, "登录成功3", c)
 	}
 }
