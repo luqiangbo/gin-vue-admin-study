@@ -11,5 +11,6 @@ func InitUserRouter(Router *gin.RouterGroup) {
 	{
 		UserRouter.POST("register", v1.Register)              // 用户注册账号
 		UserRouter.POST("change_password", v1.ChangePassword) // 用户修改密码
+		UserRouter.POST("get_user_list", v1.GetUserList)      //  分页获取用户列表
 	}
 }
