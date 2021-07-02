@@ -158,3 +158,41 @@ func GetUserList(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+
+// 用户权限
+
+func SetUserAuthority(c *gin.Context) {
+
+}
+
+// 删除用户
+
+func DeleteUser(c *gin.Context) {
+	var req request.GetById
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.IdVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	jwtId := getUserId(c)
+	if jwtId == uint(req.ID) {
+		response.FailWithMessage("删除失败, 自杀失败", c)
+		return
+	}
+	if err := service.DeleteUser(req.ID); err != nil {
+		global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
+		response.FailWithMessage("删除失败", c)
+	} else {
+		response.OkWithMessage("删除成功", c)
+	}
+}
+
+func getUserId(c *gin.Context) uint {
+	if claims, exists := c.Get("claims"); !exists {
+		global.GVA_LOG.Error("从gin的Context中获取从jwt解析出来的用户ID失败, 请检查路由是佛使用jwt中间件")
+		return 0
+	} else {
+		waitUse := claims.(*request.CustomClaims)
+		return waitUse.ID
+	}
+}
