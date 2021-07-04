@@ -64,3 +64,8 @@ func DeleteUser(id float64) (err error) {
 	err = global.GVA_DB.Where("id = ?", id).Delete(&m).Error
 	return err
 }
+
+func SetUserInfo(req model.SysUser) (err error, res model.SysUser) {
+	err = global.GVA_DB.Updates(&req).Error
+	return err, req
+}

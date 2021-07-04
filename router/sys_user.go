@@ -13,6 +13,6 @@ func InitUserRouter(Router *gin.RouterGroup) {
 		UserRouter.PUT("change_password", v1.ChangePassword) // 用户修改密码
 		UserRouter.POST("get_list", v1.GetUserList)          //  分页获取用户列表
 		UserRouter.DELETE("one", v1.DeleteUser)              // 删除用户
-
+		UserRouter.PUT("info", v1.Info)                      // 更新用户信息
 	}
 }

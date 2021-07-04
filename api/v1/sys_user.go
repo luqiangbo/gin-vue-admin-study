@@ -187,6 +187,22 @@ func DeleteUser(c *gin.Context) {
 	}
 }
 
+func Info(c *gin.Context) {
+	var req model.SysUser
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.IdVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err, res := service.SetUserInfo(req); err != nil {
+		global.GVA_LOG.Error("设置失败!", zap.Any("err", err))
+		response.FailWithMessage("设置失败!", c)
+	} else {
+		response.OkWithDetailed(gin.H{"user_info": res}, "设置成功", c)
+	}
+}
+
+//
 func getUserId(c *gin.Context) uint {
 	if claims, exists := c.Get("claims"); !exists {
 		global.GVA_LOG.Error("从gin的Context中获取从jwt解析出来的用户ID失败, 请检查路由是佛使用jwt中间件")
