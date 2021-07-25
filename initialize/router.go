@@ -18,7 +18,8 @@ func Routers() *gin.Engine {
 	PrivateGroup := Router.Group("")
 	PrivateGroup.Use(middleware.JWTAuth())
 	{
-		router.InitUserRouter(PrivateGroup) // 注册功能api路由
+		router.InitUserRouter(PrivateGroup)      // 注册功能api路由
+		router.InitAuthorityRouter(PrivateGroup) // 权限
 	}
 	return Router
 }
