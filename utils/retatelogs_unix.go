@@ -2,8 +2,8 @@ package utils
 
 import (
 	zaprotatelogs "github.com/lestrrat-go/file-rotatelogs"
+	"go-class/global"
 	"go.uber.org/zap/zapcore"
-	"goClass/global"
 	"os"
 	"path"
 	"time"

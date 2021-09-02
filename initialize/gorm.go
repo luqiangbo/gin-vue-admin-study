@@ -1,10 +1,10 @@
 package initialize
 
 import (
+	"go-class/global"
+	"go-class/initialize/internal"
+	"go-class/model"
 	"go.uber.org/zap"
-	"goClass/global"
-	"goClass/initialize/internal"
-	"goClass/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

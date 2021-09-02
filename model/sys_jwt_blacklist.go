@@ -1,6 +1,6 @@
 package model
 
-import "goClass/global"
+import "go-class/global"
 
 type JwtBlacklist struct {
 	global.GVA_MODEL

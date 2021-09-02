@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
-	"goClass/global"
-	"goClass/initialize"
+	"go-class/global"
+	"go-class/initialize"
 )
 
 func RunWindowsServer() {

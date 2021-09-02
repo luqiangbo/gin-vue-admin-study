@@ -1,7 +1,7 @@
 package model
 
 import (
-	"goClass/global"
+	"go-class/global"
 	"time"
 )
 

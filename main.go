@@ -1,9 +1,9 @@
 package main
 
 import (
-	"goClass/core"
-	"goClass/global"
-	"goClass/initialize"
+	"go-class/core"
+	"go-class/global"
+	"go-class/initialize"
 )
 
 func main() {

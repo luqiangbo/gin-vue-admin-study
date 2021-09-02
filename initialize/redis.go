@@ -2,8 +2,8 @@ package initialize
 
 import (
 	"github.com/go-redis/redis"
+	"go-class/global"
 	"go.uber.org/zap"
-	"goClass/global"
 )
 
 func Redis() {

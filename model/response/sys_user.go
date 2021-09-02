@@ -1,6 +1,6 @@
 package response
 
-import "goClass/model"
+import "go-class/model"
 
 type SysUserResponse struct {
 	User model.SysUser `json:"user"`

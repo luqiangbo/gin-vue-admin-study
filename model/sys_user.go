@@ -1,6 +1,6 @@
 package model
 
-import "goClass/global"
+import "go-class/global"
 import "github.com/satori/go.uuid"
 
 type SysUser struct {

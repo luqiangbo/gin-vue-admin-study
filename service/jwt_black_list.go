@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"goClass/global"
-	"goClass/model"
+	"go-class/global"
+	"go-class/model"
 	"gorm.io/gorm"
 	"time"
 )

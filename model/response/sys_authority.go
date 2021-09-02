@@ -1,6 +1,6 @@
 package response
 
-import "goClass/model"
+import "go-class/model"
 
 type SysAuthorityResponse struct {
 	Authority model.SysAuthority `json:"authority"`

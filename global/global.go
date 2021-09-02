@@ -3,8 +3,8 @@ package global
 import (
 	"github.com/go-redis/redis"
 	"github.com/spf13/viper"
+	"go-class/config"
 	"go.uber.org/zap"
-	"goClass/config"
 	"gorm.io/gorm"
 )
 

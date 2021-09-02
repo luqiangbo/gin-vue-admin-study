@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	v1 "goClass/api/v1"
-	"goClass/middleware"
+	v1 "go-class/api/v1"
+	"go-class/middleware"
 )
 
 func InitAuthorityRouter(Router *gin.RouterGroup) {

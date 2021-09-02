@@ -2,12 +2,12 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-class/global"
+	"go-class/model"
+	"go-class/model/response"
+	"go-class/service"
+	"go-class/utils"
 	"go.uber.org/zap"
-	"goClass/global"
-	"goClass/model"
-	"goClass/model/response"
-	"goClass/service"
-	"goClass/utils"
 )
 
 func CreateAuthority(c *gin.Context) {

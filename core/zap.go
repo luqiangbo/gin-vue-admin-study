@@ -2,10 +2,10 @@ package core
 
 import (
 	"fmt"
+	"go-class/global"
+	"go-class/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"goClass/global"
-	"goClass/utils"
 	"os"
 	"time"
 )

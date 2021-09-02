@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	v1 "goClass/api/v1"
+	v1 "go-class/api/v1"
 )
 
 func InitBaseRouter(Router *gin.RouterGroup) (R gin.IRoutes) {

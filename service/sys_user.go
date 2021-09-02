@@ -3,10 +3,10 @@ package service
 import (
 	"errors"
 	uuid "github.com/satori/go.uuid"
-	"goClass/global"
-	"goClass/model"
-	"goClass/model/request"
-	"goClass/utils"
+	"go-class/global"
+	"go-class/model"
+	"go-class/model/request"
+	"go-class/utils"
 	"gorm.io/gorm"
 )
 

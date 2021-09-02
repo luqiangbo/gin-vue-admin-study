@@ -1,8 +1,8 @@
 package service
 
 import (
-	"goClass/global"
-	"goClass/model"
+	"go-class/global"
+	"go-class/model"
 )
 
 func CreateSysOperationRecord(sysOperationRecord model.SysOperationRecord) (err error) {

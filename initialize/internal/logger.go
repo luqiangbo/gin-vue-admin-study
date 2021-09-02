@@ -3,8 +3,8 @@ package internal
 import (
 	"context"
 	"fmt"
+	"go-class/global"
 	"go.uber.org/zap"
-	"goClass/global"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
 	"io/ioutil"

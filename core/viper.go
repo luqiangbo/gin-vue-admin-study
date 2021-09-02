@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"goClass/global"
-	"goClass/utils"
+	"go-class/global"
+	"go-class/utils"
 	"os"
 )
 

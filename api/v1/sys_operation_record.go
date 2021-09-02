@@ -2,11 +2,11 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-class/global"
+	"go-class/model"
+	"go-class/model/response"
+	"go-class/service"
 	"go.uber.org/zap"
-	"goClass/global"
-	"goClass/model"
-	"goClass/model/response"
-	"goClass/service"
 )
 
 func CreateSysOperationRecord(c *gin.Context) {
