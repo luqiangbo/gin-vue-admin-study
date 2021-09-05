@@ -5,14 +5,17 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go-class/global"
-	"go-class/model"
-	"go-class/model/request"
-	"go-class/model/response"
+	"go-class/model/common/response"
+	system2 "go-class/model/system"
+	"go-class/model/system/request"
 	"go-class/service"
 	"go.uber.org/zap"
 	"strconv"
 	"time"
 )
+
+var jwtService = service.ServiceGroupApp.SystemServiceGroup.JwtService
+var userService = service.ServiceGroupApp.SystemServiceGroup.UserService
 
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -23,7 +26,7 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if service.IsBlacklist(token) {
+		if jwtService.IsBlacklist(token) {
 			response.FailWithDetailed(gin.H{"reload": true}, "您的账户异地登陆或令牌失效", c)
 			c.Abort()
 			return
@@ -41,8 +44,9 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if err, _ = service.FindUserByUuid(claims.UUID.String()); err != nil {
-			_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: token})
+		// 比较消耗性能
+		if err, _ = userService.FindUserByUuid(claims.UUID.String()); err != nil {
+			_ = jwtService.JsonInBlacklist(system2.JwtBlacklist{Jwt: token})
 			response.FailWithDetailed(gin.H{"reload": true}, err.Error(), c)
 			c.Abort()
 		}
@@ -53,15 +57,15 @@ func JWTAuth() gin.HandlerFunc {
 			c.Header("new-token", newToken)
 			c.Header("new-expires-at", strconv.FormatInt(newClaims.ExpiresAt, 10))
 			if global.GVA_CONFIG.System.UseMultipoint {
-				err, RedisJwtToken := service.GetRedisJWT(newClaims.Username)
+				err, RedisJwtToken := jwtService.GetRedisJWT(newClaims.Username)
 				if err != nil {
 					global.GVA_LOG.Error("get redis jwt failed", zap.Any("err", err))
 				} else {
 					// 当之前的取成功时才进行拉黑操作
-					_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: RedisJwtToken})
+					_ = jwtService.JsonInBlacklist(system2.JwtBlacklist{Jwt: RedisJwtToken})
 				}
 				// 无论如何都要记录单钱的活跃状态
-				_ = service.SetRedisJWT(newToken, newClaims.Username)
+				_ = jwtService.SetRedisJWT(newToken, newClaims.Username)
 			}
 		}
 		c.Set("claims", claims)

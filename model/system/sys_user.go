@@ -1,4 +1,4 @@
-package model
+package system
 
 import "go-class/global"
 import "github.com/satori/go.uuid"

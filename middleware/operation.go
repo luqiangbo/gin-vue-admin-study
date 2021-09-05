@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"github.com/gin-gonic/gin"
 	"go-class/global"
-	"go-class/model"
-	"go-class/model/request"
+	"go-class/model/system"
+	"go-class/model/system/request"
 	"go-class/service"
 	"go.uber.org/zap"
 	"io/ioutil"
@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"time"
 )
+
+var operationRecordService = service.ServiceGroupApp.SystemServiceGroup.OperationRecordService
 
 func OperationRecord() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -37,7 +39,7 @@ func OperationRecord() gin.HandlerFunc {
 			}
 			userId = id
 		}
-		record := model.SysOperationRecord{
+		record := system.SysOperationRecord{
 			Ip:     c.ClientIP(),
 			Method: c.Request.Method,
 			Path:   c.Request.URL.Path,
@@ -65,7 +67,7 @@ func OperationRecord() gin.HandlerFunc {
 		record.Latency = latency
 		record.Resp = writer.body.String()
 
-		if err := service.CreateSysOperationRecord(record); err != nil {
+		if err := operationRecordService.CreateSysOperationRecord(record); err != nil {
 			global.GVA_LOG.Error("create operation record error:", zap.Any("err", err))
 		}
 	}

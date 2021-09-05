@@ -11,15 +11,18 @@ import (
 func Routers() *gin.Engine {
 	var Router = gin.Default()
 	// 方便统一添加路由组签证 多服务器上线使用
+	// 获取路由实例
+	systemRouter := router.RouterGroupApp.System
+
 	PublicGroup := Router.Group("")
 	{
-		router.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
+		systemRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
 	}
 	PrivateGroup := Router.Group("")
 	PrivateGroup.Use(middleware.JWTAuth())
 	{
-		router.InitUserRouter(PrivateGroup)      // 注册功能api路由
-		router.InitAuthorityRouter(PrivateGroup) // 权限
+		systemRouter.InitUserRouter(PrivateGroup)      // 注册功能api路由
+		systemRouter.InitAuthorityRouter(PrivateGroup) // 权限
 	}
 	return Router
 }

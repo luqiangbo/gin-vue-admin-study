@@ -3,7 +3,7 @@ package initialize
 import (
 	"go-class/global"
 	"go-class/initialize/internal"
-	"go-class/model"
+	"go-class/model/system"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -26,12 +26,12 @@ func Gorm() *gorm.DB {
 
 func MysqlTables(db *gorm.DB) {
 	err := db.AutoMigrate(
-		model.SysUser{},
-		model.SysOperationRecord{},
-		model.JwtBlacklist{},
-		model.SysAuthority{},
-		model.SysBaseMenu{},
-		model.SysBaseMenuParameter{},
+		system.SysUser{},
+		system.SysOperationRecord{},
+		system.JwtBlacklist{},
+		system.SysAuthority{},
+		system.SysBaseMenu{},
+		system.SysBaseMenuParameter{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))
@@ -39,9 +39,6 @@ func MysqlTables(db *gorm.DB) {
 	}
 	global.GVA_LOG.Info("register table success")
 }
-
-
-
 
 func GormMysql() *gorm.DB {
 	m := global.GVA_CONFIG.Mysql
@@ -61,12 +58,12 @@ func GormMysql() *gorm.DB {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
 		logger.Config{
-			SlowThreshold: 1000,   // 慢 SQL 阈值
-			IgnoreRecordNotFoundError: true,   // 忽略ErrRecordNotFound（记录未找到）错误
+			SlowThreshold:             1000, // 慢 SQL 阈值
+			IgnoreRecordNotFoundError: true, // 忽略ErrRecordNotFound（记录未找到）错误
 		},
 	)
 	if db, err := gorm.Open(mysql.New(mysqlConfig), &gorm.Config{
-		Logger:newLogger,
+		Logger: newLogger,
 		NamingStrategy: schema.NamingStrategy{
 			//TablePrefix:   "", // 表名前缀，`User`表为`t_users`
 			SingularTable: true, // 使用单数表名，启用该选项后，`User` 表将是`user`

@@ -1,19 +1,22 @@
-package service
+package system
 
 import (
 	"errors"
 	uuid "github.com/satori/go.uuid"
 	"go-class/global"
-	"go-class/model"
-	"go-class/model/request"
+	"go-class/model/common/request"
+	"go-class/model/system"
 	"go-class/utils"
 	"gorm.io/gorm"
 )
 
+type UserService struct {
+}
+
 // 登录接口
 
-func Login(u *model.SysUser) (err error, userInter *model.SysUser) {
-	var user model.SysUser
+func (userService *UserService) Login(u *system.SysUser) (err error, userInter *system.SysUser) {
+	var user system.SysUser
 	u.Password = utils.MD5V([]byte(u.Password))
 	err = global.GVA_DB.Where("username  = ? AND password = ?", u.Username, u.Password).First(&user).Error
 	return err, &user
@@ -21,8 +24,8 @@ func Login(u *model.SysUser) (err error, userInter *model.SysUser) {
 
 // 注册接口
 
-func Register(u model.SysUser) (err error, userInter model.SysUser) {
-	var user model.SysUser
+func (userService *UserService) Register(u system.SysUser) (err error, userInter system.SysUser) {
+	var user system.SysUser
 	if !errors.Is(global.GVA_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) {
 		return errors.New("用户名已注册"), userInter
 	}
@@ -33,39 +36,39 @@ func Register(u model.SysUser) (err error, userInter model.SysUser) {
 	return err, u
 }
 
-func FindUserByUuid(uuid string) (err error, user *model.SysUser) {
-	var u model.SysUser
+func (userService *UserService) FindUserByUuid(uuid string) (err error, user *system.SysUser) {
+	var u system.SysUser
 	if err = global.GVA_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil {
 		return errors.New("用户不存在"), &u
 	}
 	return nil, &u
 }
 
-func ChangePassword(u *model.SysUser, newPassword string) (err error, userInter *model.SysUser) {
-	var user model.SysUser
+func (userService *UserService) ChangePassword(u *system.SysUser, newPassword string) (err error, userInter *system.SysUser) {
+	var user system.SysUser
 	u.Password = utils.MD5V([]byte(u.Password))
 	err = global.GVA_DB.Where("username = ? AND password = ?", u.Username, u.Password).First(&user).Update("password", utils.MD5V([]byte(newPassword))).Error
 	return err, u
 }
 
-func GetUserInfoList(info request.PageInfo) (err error, list interface{}, total int64) {
+func (userService *UserService) GetUserInfoList(info request.PageInfo) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	var m model.SysUser
+	var m system.SysUser
 	db := global.GVA_DB.Model(&m)
-	var userList []model.SysUser
+	var userList []system.SysUser
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&userList).Error
 	return err, userList, total
 }
 
-func DeleteUser(id float64) (err error) {
-	var m model.SysUser
+func (userService *UserService) DeleteUser(id float64) (err error) {
+	var m system.SysUser
 	err = global.GVA_DB.Where("id = ?", id).Delete(&m).Error
 	return err
 }
 
-func SetUserInfo(req model.SysUser) (err error, res model.SysUser) {
+func (userService *UserService) SetUserInfo(req system.SysUser) (err error, res system.SysUser) {
 	err = global.GVA_DB.Updates(&req).Error
 	return err, req
 }

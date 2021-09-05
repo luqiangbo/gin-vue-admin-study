@@ -1,6 +1,8 @@
-package model
+package system
 
-import "go-class/global"
+import (
+	"go-class/global"
+)
 
 type SysBaseMenu struct {
 	global.GVA_MODEL
