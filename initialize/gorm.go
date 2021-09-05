@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"log"
 	"os"
 )
 
@@ -39,6 +40,9 @@ func MysqlTables(db *gorm.DB) {
 	global.GVA_LOG.Info("register table success")
 }
 
+
+
+
 func GormMysql() *gorm.DB {
 	m := global.GVA_CONFIG.Mysql
 	if m.Dbname == "" {
@@ -54,7 +58,15 @@ func GormMysql() *gorm.DB {
 		SkipInitializeWithVersion: false, // 根据版本自动配置
 
 	}
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
+		logger.Config{
+			SlowThreshold: 1000,   // 慢 SQL 阈值
+			IgnoreRecordNotFoundError: true,   // 忽略ErrRecordNotFound（记录未找到）错误
+		},
+	)
 	if db, err := gorm.Open(mysql.New(mysqlConfig), &gorm.Config{
+		Logger:newLogger,
 		NamingStrategy: schema.NamingStrategy{
 			//TablePrefix:   "", // 表名前缀，`User`表为`t_users`
 			SingularTable: true, // 使用单数表名，启用该选项后，`User` 表将是`user`
