@@ -1,4 +1,4 @@
-package system
+package tables
 
 type SysUseAuthority struct {
 	SysUserId               uint   `gorm:"column:sys_user_id"`

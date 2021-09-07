@@ -3,7 +3,7 @@ package system
 import (
 	"errors"
 	"go-class/global"
-	"go-class/model/system"
+	"go-class/model/system/tables"
 	"gorm.io/gorm"
 	"time"
 )
@@ -11,13 +11,13 @@ import (
 type JwtService struct {
 }
 
-func (JwtService *JwtService) JsonInBlacklist(jwtList system.JwtBlacklist) (err error) {
+func (JwtService *JwtService) JsonInBlacklist(jwtList tables.JwtBlacklist) (err error) {
 	err = global.GVA_DB.Create(&jwtList).Error
 	return
 }
 
 func (JwtService *JwtService) IsBlacklist(jwt string) bool {
-	err := global.GVA_DB.Where("jwt = ?", jwt).First(&system.JwtBlacklist{}).Error
+	err := global.GVA_DB.Where("jwt = ?", jwt).First(&tables.JwtBlacklist{}).Error
 	isNotFound := errors.Is(err, gorm.ErrRecordNotFound)
 	return !isNotFound
 

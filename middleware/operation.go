@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"github.com/gin-gonic/gin"
 	"go-class/global"
-	"go-class/model/system"
 	"go-class/model/system/request"
+	"go-class/model/system/tables"
 	"go-class/service"
 	"go.uber.org/zap"
 	"io/ioutil"
@@ -39,7 +39,7 @@ func OperationRecord() gin.HandlerFunc {
 			}
 			userId = id
 		}
-		record := system.SysOperationRecord{
+		record := tables.SysOperationRecord{
 			Ip:     c.ClientIP(),
 			Method: c.Request.Method,
 			Path:   c.Request.URL.Path,

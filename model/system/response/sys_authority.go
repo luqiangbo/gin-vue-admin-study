@@ -1,14 +1,14 @@
 package response
 
 import (
-	"go-class/model/system"
+	"go-class/model/system/tables"
 )
 
 type SysAuthorityResponse struct {
-	Authority system.SysAuthority `json:"authority"`
+	Authority tables.SysAuthority `json:"authority"`
 }
 
 type SysAuthorityCopyResponse struct {
-	Authority      system.SysAuthority `json:"authority"`
+	Authority      tables.SysAuthority `json:"authority"`
 	OldAuthorityId string              `json:"old_authority_id"`
 }

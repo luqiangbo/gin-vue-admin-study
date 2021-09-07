@@ -1,4 +1,4 @@
-package system
+package tables
 
 type SysMenu struct {
 	SysBaseMenu

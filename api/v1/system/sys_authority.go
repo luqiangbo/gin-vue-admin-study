@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-class/global"
 	commonRes "go-class/model/common/response"
-	"go-class/model/system"
 	"go-class/model/system/response"
+	"go-class/model/system/tables"
 	"go-class/utils"
 	"go.uber.org/zap"
 )
@@ -14,7 +14,7 @@ type AuthorityApi struct {
 }
 
 func (a *AuthorityApi) CreateAuthority(c *gin.Context) {
-	var req system.SysAuthority
+	var req tables.SysAuthority
 	_ = c.ShouldBindJSON(&req)
 	if err := utils.Verify(req, utils.AuthorityVerify); err != nil {
 		commonRes.FailWithMessage(err.Error(), c)

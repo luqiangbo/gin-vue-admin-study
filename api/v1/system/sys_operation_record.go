@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-class/global"
 	"go-class/model/common/response"
-	"go-class/model/system"
+	"go-class/model/system/tables"
 	"go.uber.org/zap"
 )
 
@@ -14,7 +14,7 @@ type OperationRecordApi struct {
 // 创建记录
 
 func (s *OperationRecordApi) CreateSysOperationRecord(c *gin.Context) {
-	var sysOperationRecord system.SysOperationRecord
+	var sysOperationRecord tables.SysOperationRecord
 	_ = c.ShouldBindJSON(&sysOperationRecord)
 	if err := operationRecordService.CreateSysOperationRecord(sysOperationRecord); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Any("err", err))

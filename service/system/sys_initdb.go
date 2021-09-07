@@ -3,7 +3,16 @@ package system
 import (
 	"database/sql"
 	"fmt"
+	"github.com/spf13/viper"
+	"go-class/config"
+	"go-class/global"
 	modelSystemReq "go-class/model/system/request"
+	"go-class/model/system/tables"
+	"go-class/source"
+	"go-class/utils"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"path/filepath"
 )
 
 type InitDBService struct {
@@ -30,7 +39,26 @@ func (initDBService *InitDBService) createTable(dsn string, driver string, creat
 	return err
 }
 
-// 创建数据库
+func (initDBService *InitDBService) writeConfig(viper *viper.Viper, mysql config.Mysql) error {
+	global.GVA_CONFIG.Mysql = mysql
+	cs := utils.StructToMap(global.GVA_CONFIG)
+	for k, v := range cs {
+		viper.Set(k, v)
+	}
+	return viper.WriteConfig()
+}
+
+func (initDBService *InitDBService) initDB(InitDBFunctions ...tables.InitDbFunc) (err error) {
+	for _, v := range InitDBFunctions {
+		err = v.Init()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// 创建数据库和表
 
 func (initDBService *InitDBService) InitDB(conf modelSystemReq.InitDB) error {
 	if conf.Host == "" {
@@ -44,5 +72,62 @@ func (initDBService *InitDBService) InitDB(conf modelSystemReq.InitDB) error {
 	if err := initDBService.createTable(dsn, "mysql", createSql); err != nil {
 		return err
 	}
+
+	MysqlConfig := config.Mysql{
+		Path:     fmt.Sprintf("%s:%s", conf.Host, conf.Port),
+		Dbname:   conf.DBName,
+		Username: conf.UserName,
+		Password: conf.Password,
+		Config:   "charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai",
+	}
+
+	if MysqlConfig.Dbname == "" {
+		return nil
+	}
+	linkDns := MysqlConfig.Username + ":" + MysqlConfig.Password + "@tcp(" + MysqlConfig.Path + ")/" + MysqlConfig.Dbname + "?" + MysqlConfig.Config
+	mysqlConfig := mysql.Config{
+		DSN:                       linkDns, // DSN data source name
+		DefaultStringSize:         191,     // string 类型字段的默认长度
+		DisableDatetimePrecision:  true,    // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
+		DontSupportRenameIndex:    true,    // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
+		DontSupportRenameColumn:   true,    // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
+		SkipInitializeWithVersion: false,   // 根据版本自动配置
+	}
+	if db, err := gorm.Open(mysql.New(mysqlConfig), &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}); err != nil {
+		return nil
+	} else {
+		sqlDB, _ := db.DB()
+		sqlDB.SetMaxIdleConns(MysqlConfig.MaxIdleConns)
+		sqlDB.SetMaxOpenConns(MysqlConfig.MaxOpenConns)
+		global.GVA_DB = db
+	}
+
+	err := global.GVA_DB.AutoMigrate(
+		tables.SysAuthority{},
+		tables.SysBaseMenu{},
+		tables.SysBaseMenuParameter{},
+		tables.SysMenu{},
+		tables.SysOperationRecord{},
+		tables.SysUseAuthority{},
+		tables.SysUser{},
+	)
+
+	if err != nil {
+		global.GVA_DB = nil
+		return err
+	}
+
+	err = initDBService.initDB(
+		source.UserAuthority,
+	)
+
+	if err != nil {
+		global.GVA_DB = nil
+		return err
+	}
+	if err = initDBService.writeConfig(global.GVA_VP, MysqlConfig); err != nil {
+		return err
+	}
+	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	return nil
 }

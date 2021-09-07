@@ -9,9 +9,9 @@ import (
 	"go-class/middleware"
 	commonReq "go-class/model/common/request"
 	commonRes "go-class/model/common/response"
-	modelSystem "go-class/model/system"
 	modelSystemRequest "go-class/model/system/request"
 	"go-class/model/system/response"
+	"go-class/model/system/tables"
 	"go-class/utils"
 	"go.uber.org/zap"
 	"time"
@@ -29,7 +29,7 @@ func (b *BaseApi) Register(c *gin.Context) {
 		commonRes.FailWithMessage(err.Error(), c)
 		return
 	}
-	user := &modelSystem.SysUser{Username: req.Username, Password: req.Password}
+	user := &tables.SysUser{Username: req.Username, Password: req.Password}
 	err, userReturn := userService.Register(*user)
 	if err != nil {
 		global.GVA_LOG.Error("注册失败", zap.Any("err", err))
@@ -49,7 +49,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 		commonRes.FailWithMessage(err.Error(), c)
 		return
 	}
-	u := &modelSystem.SysUser{Username: req.Username, Password: req.Password}
+	u := &tables.SysUser{Username: req.Username, Password: req.Password}
 	if err, user := userService.Login(u); err != nil {
 		global.GVA_LOG.Error("登陆失败! 用户名不存在或密码错误!", zap.Any("err", err))
 		commonRes.FailWithMessage("用户名不存在或者密码错误", c)
@@ -59,7 +59,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 }
 
 // 获取token
-func (b *BaseApi) tokenNext(c *gin.Context, user modelSystem.SysUser) {
+func (b *BaseApi) tokenNext(c *gin.Context, user tables.SysUser) {
 	j := &middleware.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)}
 
 	claims := modelSystemRequest.CustomClaims{
@@ -106,7 +106,7 @@ func (b *BaseApi) tokenNext(c *gin.Context, user modelSystem.SysUser) {
 		global.GVA_LOG.Error("设置登录状态失败2!", zap.Any("err", err))
 		commonRes.FailWithMessage("设置登录状态失败2", c)
 	} else {
-		var blackJWT modelSystem.JwtBlacklist
+		var blackJWT tables.JwtBlacklist
 		blackJWT.Jwt = jwtStr
 		if err := jwtService.JsonInBlacklist(blackJWT); err != nil {
 			commonRes.FailWithMessage("jwt作废失败3", c)
@@ -133,7 +133,7 @@ func (b *BaseApi) ChangePassword(c *gin.Context) {
 		commonRes.FailWithMessage(err.Error(), c)
 		return
 	}
-	u := &modelSystem.SysUser{Username: req.Username, Password: req.Password}
+	u := &tables.SysUser{Username: req.Username, Password: req.Password}
 	if err, _ := userService.ChangePassword(u, req.NewPassword); err != nil {
 		global.GVA_LOG.Error("修改失败!", zap.Any("err", err))
 		commonRes.FailWithMessage("修改失败 , 原密码与当前账户不符", c)
@@ -221,7 +221,7 @@ func (b *BaseApi) DeleteUser(c *gin.Context) {
 }
 
 func (b *BaseApi) Info(c *gin.Context) {
-	var req modelSystem.SysUser
+	var req tables.SysUser
 	_ = c.ShouldBindJSON(&req)
 	if err := utils.Verify(req, utils.IdVerify); err != nil {
 		commonRes.FailWithMessage(err.Error(), c)

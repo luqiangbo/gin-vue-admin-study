@@ -3,7 +3,7 @@ package initialize
 import (
 	"go-class/global"
 	"go-class/initialize/internal"
-	"go-class/model/system"
+	"go-class/model/system/tables"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -24,14 +24,14 @@ func Gorm() *gorm.DB {
 	}
 }
 
-func MysqlTables(db *gorm.DB) {
-	err := db.AutoMigrate(
-		system.SysUser{},
-		system.SysOperationRecord{},
-		system.JwtBlacklist{},
-		system.SysAuthority{},
-		system.SysBaseMenu{},
-		system.SysBaseMenuParameter{},
+func MysqlTables(dbs *gorm.DB) {
+	err := dbs.AutoMigrate(
+		tables.SysUser{},
+		tables.SysOperationRecord{},
+		tables.JwtBlacklist{},
+		tables.SysAuthority{},
+		tables.SysBaseMenu{},
+		tables.SysBaseMenuParameter{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))

@@ -1,23 +1,22 @@
+autocode:
+  transfer-restart: true
+  root: ""
+  server: /server
+  server-api: /api/v1/autocode
+  server-initialize: /initialize
+  server-model: /model/autocode
+  server-request: /model/autocode/request/
+  server-router: /router/autocode
+  server-service: /service/autocode
+  web: /web/src
+  web-api: /api
+  web-form: /view
+  web-table: /view
+  web-flow: /view
 jwt:
-  signing-key: 'can'
+  signing-key: can
   expires-time: 604800
   buffer-time: 86400
-system:
-  env: 'public'  # Change to "develop" to skip authentication for development mode
-  addr: 8081
-  db-type: 'mysql'
-  use-multipoint: true
-zap:
-  level: 'info'
-  format: 'console'
-  prefix: '[GO-CLASS]'
-  director: 'log'
-  link-name: 'latest_log'
-  show-line: true
-  encode-level: 'LowercaseColorLevelEncoder'
-  stacktrace-key: 'stacktrace'
-  log-in-console: true
-
 mysql:
   path: ''
   config: ''
@@ -29,6 +28,21 @@ mysql:
   log-mode: false
   log-zap: ""
 redis:
-  db: 0
-  addr: '104.128.94.5:6379'
-  password: '12306'
+  tables: 0
+  addr: 104.128.94.5:6379
+  password: "12306"
+system:
+  env: public
+  addr: 8081
+  tables-type: ""
+  use-multipoint: true
+zap:
+  level: info
+  format: console
+  prefix: '[GO-CLASS]'
+  director: log
+  link-name: latest_log
+  showLine: false
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  log-in-console: true
