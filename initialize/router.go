@@ -14,9 +14,12 @@ func Routers() *gin.Engine {
 	// 获取路由实例
 	systemRouter := router.RouterGroupApp.System
 
+	// 注册基础功能路由 不做鉴权
 	PublicGroup := Router.Group("")
 	{
 		systemRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
+		systemRouter.InitInitRouter(PublicGroup) // 初始化数据库
+
 	}
 	PrivateGroup := Router.Group("")
 	PrivateGroup.Use(middleware.JWTAuth())

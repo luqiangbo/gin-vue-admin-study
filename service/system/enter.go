@@ -5,4 +5,5 @@ type ServiceGroup struct {
 	AuthorityService
 	OperationRecordService
 	UserService
+	InitDBService
 }

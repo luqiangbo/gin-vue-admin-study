@@ -11,6 +11,8 @@ import (
 type OperationRecordApi struct {
 }
 
+// 创建记录
+
 func (s *OperationRecordApi) CreateSysOperationRecord(c *gin.Context) {
 	var sysOperationRecord system.SysOperationRecord
 	_ = c.ShouldBindJSON(&sysOperationRecord)

@@ -13,6 +13,7 @@ func (s *AuthorityRouter) InitAuthorityRouter(Router *gin.RouterGroup) {
 	authorityRouter := Router.Group("authority").Use(middleware.OperationRecord())
 	var authorityApi = v1.ApiGroupApp.SystemApiGroup.AuthorityApi
 	{
-		authorityRouter.POST("create_authority", authorityApi.CreateAuthority)
+		authorityRouter.POST("create_authority", authorityApi.CreateAuthority) // 创建角色
+
 	}
 }

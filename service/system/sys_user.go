@@ -72,3 +72,35 @@ func (userService *UserService) SetUserInfo(req system.SysUser) (err error, res 
 	err = global.GVA_DB.Updates(&req).Error
 	return err, req
 }
+
+// 设置用户的权限
+
+func (userService *UserService) SetUserAuthority(id uint, uuid uuid.UUID, authorityId string) (err error) {
+	assignErr := global.GVA_DB.Where("sys_user_id = ? AND sys_authority_authority_id = ?", id, authorityId).First(&system.SysUseAuthority{}).Error
+	if errors.Is(assignErr, gorm.ErrRecordNotFound) {
+		return errors.New("该用户无此角色")
+	}
+	err = global.GVA_DB.Where("uuid = ?", uuid).First(&system.SysUser{}).Error
+	return err
+}
+
+// 设置一个用户的权限
+
+func (userService *UserService) SetUserAuthorities(id uint, authorityIds []string) (err error) {
+	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		TxErr := tx.Delete(&[]system.SysUseAuthority{}, "sys_user_id = ?", id).Error
+		if TxErr != nil {
+			return TxErr
+		}
+		useAuthority := []system.SysUseAuthority{}
+		for _, v := range authorityIds {
+			useAuthority = append(useAuthority, system.SysUseAuthority{id, v})
+		}
+		TxErr = tx.Create(&useAuthority).Error
+		if TxErr != nil {
+			return TxErr
+		}
+		// 返回nil提交事务
+		return nil
+	})
+}

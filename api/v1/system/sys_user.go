@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
@@ -8,8 +9,8 @@ import (
 	"go-class/middleware"
 	commonReq "go-class/model/common/request"
 	commonRes "go-class/model/common/response"
-	system2 "go-class/model/system"
-	request2 "go-class/model/system/request"
+	modelSystem "go-class/model/system"
+	modelSystemRequest "go-class/model/system/request"
 	"go-class/model/system/response"
 	"go-class/utils"
 	"go.uber.org/zap"
@@ -22,13 +23,13 @@ type BaseApi struct {
 // 注册
 
 func (b *BaseApi) Register(c *gin.Context) {
-	var req request2.Register
+	var req modelSystemRequest.Register
 	_ = c.ShouldBindJSON(&req)
 	if err := utils.Verify(req, utils.RegisterVerify); err != nil {
 		commonRes.FailWithMessage(err.Error(), c)
 		return
 	}
-	user := &system2.SysUser{Username: req.Username, Password: req.Password}
+	user := &modelSystem.SysUser{Username: req.Username, Password: req.Password}
 	err, userReturn := userService.Register(*user)
 	if err != nil {
 		global.GVA_LOG.Error("注册失败", zap.Any("err", err))
@@ -41,14 +42,14 @@ func (b *BaseApi) Register(c *gin.Context) {
 // 登录
 
 func (b *BaseApi) Login(c *gin.Context) {
-	var req request2.Login
+	var req modelSystemRequest.Login
 	_ = c.ShouldBindJSON(&req)
 	if err := utils.Verify(req, utils.LoginVerify); err != nil {
 		global.GVA_LOG.Error("登陆失败! 用户名不存在或者密码错误!", zap.Any("err", err))
 		commonRes.FailWithMessage(err.Error(), c)
 		return
 	}
-	u := &system2.SysUser{Username: req.Username, Password: req.Password}
+	u := &modelSystem.SysUser{Username: req.Username, Password: req.Password}
 	if err, user := userService.Login(u); err != nil {
 		global.GVA_LOG.Error("登陆失败! 用户名不存在或密码错误!", zap.Any("err", err))
 		commonRes.FailWithMessage("用户名不存在或者密码错误", c)
@@ -58,10 +59,10 @@ func (b *BaseApi) Login(c *gin.Context) {
 }
 
 // 获取token
-func (b *BaseApi) tokenNext(c *gin.Context, user system2.SysUser) {
+func (b *BaseApi) tokenNext(c *gin.Context, user modelSystem.SysUser) {
 	j := &middleware.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)}
 
-	claims := request2.CustomClaims{
+	claims := modelSystemRequest.CustomClaims{
 		UUID:       user.UUID,
 		ID:         user.ID,
 		NickName:   user.NickName,
@@ -105,7 +106,7 @@ func (b *BaseApi) tokenNext(c *gin.Context, user system2.SysUser) {
 		global.GVA_LOG.Error("设置登录状态失败2!", zap.Any("err", err))
 		commonRes.FailWithMessage("设置登录状态失败2", c)
 	} else {
-		var blackJWT system2.JwtBlacklist
+		var blackJWT modelSystem.JwtBlacklist
 		blackJWT.Jwt = jwtStr
 		if err := jwtService.JsonInBlacklist(blackJWT); err != nil {
 			commonRes.FailWithMessage("jwt作废失败3", c)
@@ -126,13 +127,13 @@ func (b *BaseApi) tokenNext(c *gin.Context, user system2.SysUser) {
 // 修改密码
 
 func (b *BaseApi) ChangePassword(c *gin.Context) {
-	var req request2.ChangePassword
+	var req modelSystemRequest.ChangePassword
 	_ = c.ShouldBindJSON(&req)
 	if err := utils.Verify(req, utils.ChangePasswordVerify); err != nil {
 		commonRes.FailWithMessage(err.Error(), c)
 		return
 	}
-	u := &system2.SysUser{Username: req.Username, Password: req.Password}
+	u := &modelSystem.SysUser{Username: req.Username, Password: req.Password}
 	if err, _ := userService.ChangePassword(u, req.NewPassword); err != nil {
 		global.GVA_LOG.Error("修改失败!", zap.Any("err", err))
 		commonRes.FailWithMessage("修改失败 , 原密码与当前账户不符", c)
@@ -163,10 +164,38 @@ func (b *BaseApi) GetUserList(c *gin.Context) {
 	}
 }
 
-// 用户权限
+// 更改用户权限
+// @Router /user/set_user_authority post
 
-func SetUserAuthority(c *gin.Context) {
+func (b *BaseApi) SetUserAuthority(c *gin.Context) {
+	var req modelSystemRequest.SetUserAuth
+	_ = c.ShouldBindJSON(&req)
+	// 入参校验
+	if UserVerifyErr := utils.Verify(req, utils.SetUserAuthorityVerify); UserVerifyErr != nil {
+		commonRes.FailWithMessage(UserVerifyErr.Error(), c)
+		return
+	}
+	//
+	userID := utils.GetUserId(c)
+	uuid := utils.GetUserUuid(c)
+	if err := userService.SetUserAuthority(userID, uuid, req.AuthorityId); err != nil {
+		fmt.Println("失败")
+	} else {
+		fmt.Println("成功")
+	}
+}
 
+// SetUserAuthorities
+// 设置用户权限
+func (b *BaseApi) SetUserAuthorities(c *gin.Context) {
+	var req modelSystemRequest.SetUserAuthorities
+	_ = c.ShouldBindJSON(&req)
+	if err := userService.SetUserAuthorities(req.ID, req.AuthorityIds); err != nil {
+		global.GVA_LOG.Error("修改失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("修改失败", c)
+	} else {
+		commonRes.OkWithMessage("修改成功", c)
+	}
 }
 
 // 删除用户
@@ -192,7 +221,7 @@ func (b *BaseApi) DeleteUser(c *gin.Context) {
 }
 
 func (b *BaseApi) Info(c *gin.Context) {
-	var req system2.SysUser
+	var req modelSystem.SysUser
 	_ = c.ShouldBindJSON(&req)
 	if err := utils.Verify(req, utils.IdVerify); err != nil {
 		commonRes.FailWithMessage(err.Error(), c)
