@@ -124,6 +124,8 @@ func (initDBService *InitDBService) InitDB(conf modelSystemReq.InitDB) error {
 	err = initDBService.initDB(
 		source.UserAuthority,
 		source.Admin,
+		source.Authority,
+		source.BaseMenu,
 	)
 
 	if err != nil {
