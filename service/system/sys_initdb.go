@@ -12,6 +12,7 @@ import (
 	"go-class/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"path/filepath"
 )
 
@@ -93,7 +94,10 @@ func (initDBService *InitDBService) InitDB(conf modelSystemReq.InitDB) error {
 		DontSupportRenameColumn:   true,    // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
 		SkipInitializeWithVersion: false,   // 根据版本自动配置
 	}
-	if db, err := gorm.Open(mysql.New(mysqlConfig), &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}); err != nil {
+	if db, err := gorm.Open(mysql.New(mysqlConfig), &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true, NamingStrategy: schema.NamingStrategy{
+		//TablePrefix:   "", // 表名前缀，`User`表为`t_users`
+		SingularTable: true, // 使用单数表名，启用该选项后，`User` 表将是`user`
+	}}); err != nil {
 		return nil
 	} else {
 		sqlDB, _ := db.DB()
