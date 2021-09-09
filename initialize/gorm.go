@@ -28,13 +28,14 @@ func Gorm() *gorm.DB {
 
 func MysqlTables(dbs *gorm.DB) {
 	err := dbs.AutoMigrate(
-		tables.SysAuthority{},
-		tables.SysBaseMenu{},
-		tables.SysBaseMenuParameter{},
-		tables.SysMenu{},
-		tables.SysOperationRecord{},
-		tables.SysUseAuthority{},
 		tables.SysUser{},
+		tables.JwtBlacklist{},
+		tables.SysOperationRecord{},
+
+		//tables.SysBaseMenu{},
+		//tables.SysAuthority{},
+		//tables.SysBaseMenuParameter{},
+
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))

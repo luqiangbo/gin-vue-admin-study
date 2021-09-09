@@ -76,8 +76,8 @@ func (b *BaseApi) tokenNext(c *gin.Context, user tables.SysUser) {
 	}
 	token, err := j.CreateToken(claims)
 	if err != nil {
-		global.GVA_LOG.Error("获取token失败!", zap.Any("err", err))
-		commonRes.FailWithMessage("获取token失败", c)
+		global.GVA_LOG.Error("创建token失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("创建token失败", c)
 		return
 	}
 	if !global.GVA_CONFIG.System.UseMultipoint {

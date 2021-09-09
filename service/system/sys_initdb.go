@@ -114,6 +114,7 @@ func (initDBService *InitDBService) InitDB(conf modelSystemReq.InitDB) error {
 		tables.SysOperationRecord{},
 		tables.SysUseAuthority{},
 		tables.SysUser{},
+		tables.JwtBlacklist{},
 	)
 
 	if err != nil {

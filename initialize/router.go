@@ -17,7 +17,7 @@ func Routers() *gin.Engine {
 	// 注册基础功能路由 不做鉴权
 	PublicGroup := Router.Group("")
 	{
-		systemRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
+		systemRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权 注册 登录
 		systemRouter.InitInitRouter(PublicGroup) // 初始化数据库
 
 	}
