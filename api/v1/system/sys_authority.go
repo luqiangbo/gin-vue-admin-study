@@ -70,3 +70,20 @@ func (a *AuthorityApi) GetAuthorityList(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+
+// 更新角色
+
+func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
+	var req tables.SysAuthority
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.AuthorityVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err, data := authorityService.UpdateAuthority(req); err != nil {
+		global.GVA_LOG.Error("更新失败", zap.Any("err", err))
+		commonRes.FailWithMessage("更新失败"+err.Error(), c)
+	} else {
+		commonRes.OkWithDetailed(response.SysAuthorityResponse{Authority: data}, "更新成功", c)
+	}
+}

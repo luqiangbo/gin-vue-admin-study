@@ -78,3 +78,10 @@ func (a *AuthorityService) findChildrenAuthority(req *tables.SysAuthority) (err 
 	}
 	return err
 }
+
+// 更新角色
+
+func (a *AuthorityService) UpdateAuthority(req tables.SysAuthority) (err error, res tables.SysAuthority) {
+	err = global.GVA_DB.Where("authority_id = ?", req.AuthorityId).First(&tables.SysAuthority{}).Updates(&req).Error
+	return err, req
+}
