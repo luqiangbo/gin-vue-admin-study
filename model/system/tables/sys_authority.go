@@ -11,8 +11,8 @@ type SysAuthority struct {
 	AuthorityId     string         `json:"authority_id" gorm:"not null;unique;primary_key;comment:角色ID;size:90"` // 角色ID
 	AuthorityName   string         `json:"authority_name" gorm:"comment:角色名"`
 	ParentId        string         `json:"parent_id" gorm:"comment:父角色ID"`
-	DataAuthorityId []SysAuthority `json:"data_authority_id" gorm:"many2many:m2m_data_authority_id"`
+	AuthorityIdList []SysAuthority `json:"authority_id_list" gorm:"many2many:sys_authority_m2m_sys_authority"`
 	Children        []SysAuthority `json:"children" gorm:"-"`
-	SysBaseMenus    []SysBaseMenu  `json:"sys_base_menus" gorm:"many2many:m2m_authority_menus;"`
+	BaseMenuList    []SysBaseMenu  `json:"base_menu_list" gorm:"many2many:sys_authority_m2m_sys_base_menu;"`
 	DefaultRouter   string         `json:"default_router" gorm:"comment:默认菜单;default:dashboard"`
 }

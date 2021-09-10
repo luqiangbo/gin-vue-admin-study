@@ -13,7 +13,7 @@ type SysBaseMenu struct {
 	Hidden        bool                              `json:"hidden" gorm:"comment:是否在列表隐藏"`
 	Component     string                            `json:"component" gorm:"comment:对应前端文件路径"`
 	Sort          int                               `json:"sort" gorm:"comment:排序标记"`
-	SysAuthoritys []SysAuthority                    `json:"authoritys" gorm:"many2many:m2m_authority_menus"`
+	AuthorityList []SysAuthority                    `json:"authority_list" gorm:"many2many:sys_base_menu_m2m_sys_authority"`
 	Children      []SysBaseMenu                     `json:"children" gorm:"-"`
 	Parameters    []SysBaseMenuParameter            `json:"parameters"`
 	Meta          `json:"meta" gorm:"comment:附加属性"` // 附加属性

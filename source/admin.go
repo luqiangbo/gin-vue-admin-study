@@ -37,7 +37,7 @@ var admins = []tables.SysUser{
 		},
 		UUID:        uuid.NewV4(),
 		Username:    "a303176530",
-		Password:    "3ec063004a6f31642261936a379fde3d",
+		Password:    "e10adc3949ba59abbe56e057f20f883e",
 		NickName:    "QMPlusUser",
 		HeaderImg:   "http://qmplusimg.henrongyi.top/1572075907logo.png",
 		AuthorityId: "9528",

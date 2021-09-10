@@ -59,7 +59,7 @@ func (a *AuthorityService) GetAuthorityInfoList(req commonReq.PageInfo) (err err
 	offset := req.Page * (req.Page - 1)
 	db := global.GVA_DB
 	var authority []tables.SysAuthority
-	err = db.Limit(limit).Offset(offset).Preload("DataAuthorityId").Find(&authority).Error
+	err = db.Limit(limit).Offset(offset).Preload("AuthorityIdList").Find(&authority).Error
 	if len(authority) > 0 {
 		for k := range authority {
 			err = a.findChildrenAuthority(&authority[k])
@@ -70,7 +70,7 @@ func (a *AuthorityService) GetAuthorityInfoList(req commonReq.PageInfo) (err err
 
 // 查询子角色
 func (a *AuthorityService) findChildrenAuthority(req *tables.SysAuthority) (err error) {
-	err = global.GVA_DB.Preload("DataAuthorityId").Where("parent_id = ?", req.AuthorityId).Find(&req.Children).Error
+	err = global.GVA_DB.Preload("AuthorityIdList").Where("parent_id = ?", req.AuthorityId).Find(&req.Children).Error
 	if len(req.Children) > 0 {
 		for k := range req.Children {
 			err = a.findChildrenAuthority(&req.Children[k])
