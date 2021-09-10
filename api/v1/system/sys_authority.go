@@ -3,6 +3,7 @@ package system
 import (
 	"github.com/gin-gonic/gin"
 	"go-class/global"
+	commonReq "go-class/model/common/request"
 	commonRes "go-class/model/common/response"
 	"go-class/model/system/response"
 	"go-class/model/system/tables"
@@ -45,5 +46,27 @@ func (a *AuthorityApi) DeleteAuthority(c *gin.Context) {
 		commonRes.FailWithMessage("删除失败"+err.Error(), c)
 	} else {
 		commonRes.OkWithMessage("删除成功", c)
+	}
+}
+
+// 分页获取角色列表
+
+func (a *AuthorityApi) GetAuthorityList(c *gin.Context) {
+	var req commonReq.PageInfo
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.PageInfoVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err, list, total := authorityService.GetAuthorityInfoList(req); err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("获取失败"+err.Error(), c)
+	} else {
+		commonRes.OkWithDetailed(commonRes.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     req.Page,
+			PageSize: req.PageSize,
+		}, "获取成功", c)
 	}
 }

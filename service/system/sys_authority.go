@@ -3,6 +3,7 @@ package system
 import (
 	"errors"
 	"go-class/global"
+	commonReq "go-class/model/common/request"
 	"go-class/model/system/tables"
 	"gorm.io/gorm"
 )
@@ -48,5 +49,32 @@ func (a *AuthorityService) DeleteAuthority(props *tables.SysAuthority) (err erro
 
 	err = global.GVA_DB.Delete(&[]tables.SysUseAuthority{}, "sys_authority_authority_id = ?", props.AuthorityId).Error
 
+	return err
+}
+
+// 分页获取
+
+func (a *AuthorityService) GetAuthorityInfoList(req commonReq.PageInfo) (err error, list interface{}, total int64) {
+	limit := req.PageSize
+	offset := req.Page * (req.Page - 1)
+	db := global.GVA_DB
+	var authority []tables.SysAuthority
+	err = db.Limit(limit).Offset(offset).Preload("DataAuthorityId").Find(&authority).Error
+	if len(authority) > 0 {
+		for k := range authority {
+			err = a.findChildrenAuthority(&authority[k])
+		}
+	}
+	return err, authority, total
+}
+
+// 查询子角色
+func (a *AuthorityService) findChildrenAuthority(req *tables.SysAuthority) (err error) {
+	err = global.GVA_DB.Preload("DataAuthorityId").Where("parent_id = ?", req.AuthorityId).Find(&req.Children).Error
+	if len(req.Children) > 0 {
+		for k := range req.Children {
+			err = a.findChildrenAuthority(&req.Children[k])
+		}
+	}
 	return err
 }
