@@ -107,14 +107,13 @@ func (initDBService *InitDBService) InitDB(conf modelSystemReq.InitDB) error {
 	}
 
 	err := global.GVA_DB.AutoMigrate(
+		tables.SysUser{},
 		tables.SysAuthority{},
 		tables.SysBaseMenu{},
 		tables.SysBaseMenuParameter{},
-		tables.SysMenu{},
+		tables.JwtBlacklist{},
 		tables.SysOperationRecord{},
 		tables.SysUseAuthority{},
-		tables.SysUser{},
-		tables.JwtBlacklist{},
 	)
 
 	if err != nil {
@@ -123,10 +122,13 @@ func (initDBService *InitDBService) InitDB(conf modelSystemReq.InitDB) error {
 	}
 
 	err = initDBService.initDB(
-		source.UserAuthority,
 		source.Admin,
+		source.AuthorityMenu,
 		source.Authority,
+		source.AuthoritiesMenus,
+		source.AuthorityIdList,
 		source.BaseMenu,
+		source.UserAuthority,
 	)
 
 	if err != nil {

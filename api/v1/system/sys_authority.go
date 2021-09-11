@@ -87,3 +87,21 @@ func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
 		commonRes.OkWithDetailed(response.SysAuthorityResponse{Authority: data}, "更新成功", c)
 	}
 }
+
+// 设置角色 资源权限
+
+func (a *AuthorityApi) SetDataAuthority(c *gin.Context) {
+	var req tables.SysAuthority
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.AuthorityIdVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := authorityService.SetDataAuthority(req); err != nil {
+		global.GVA_LOG.Error("设置失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("设置失败"+err.Error(), c)
+	} else {
+		commonRes.OkWithMessage("设置成功", c)
+
+	}
+}

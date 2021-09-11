@@ -31,14 +31,12 @@ func MysqlTables(dbs *gorm.DB) {
 		tables.SysUser{},
 		tables.JwtBlacklist{},
 		tables.SysOperationRecord{},
-
-		//tables.SysBaseMenu{},
 		//tables.SysAuthority{},
-		//tables.SysBaseMenuParameter{},
-
+		//tables.SysBaseMenu{},
+		tables.SysBaseMenuParameter{},
 	)
 	if err != nil {
-		global.GVA_LOG.Error("register table failed", zap.Any("err", err))
+		global.GVA_LOG.Error("表初始化失败 register table failed", zap.Any("err", err))
 		os.Exit(0)
 	}
 	global.GVA_LOG.Info("register table success")

@@ -58,14 +58,14 @@ func (a *AuthorityService) GetAuthorityInfoList(req commonReq.PageInfo) (err err
 	limit := req.PageSize
 	offset := req.Page * (req.Page - 1)
 	db := global.GVA_DB
-	var authority []tables.SysAuthority
-	err = db.Limit(limit).Offset(offset).Preload("AuthorityIdList").Find(&authority).Error
-	if len(authority) > 0 {
-		for k := range authority {
-			err = a.findChildrenAuthority(&authority[k])
+	var authorityList []tables.SysAuthority
+	err = db.Limit(limit).Offset(offset).Preload("AuthorityIdList").Where("parent_id = 0").Find(&authorityList).Error
+	if len(authorityList) > 0 {
+		for k := range authorityList {
+			err = a.findChildrenAuthority(&authorityList[k])
 		}
 	}
-	return err, authority, total
+	return err, authorityList, total
 }
 
 // 查询子角色
@@ -84,4 +84,13 @@ func (a *AuthorityService) findChildrenAuthority(req *tables.SysAuthority) (err 
 func (a *AuthorityService) UpdateAuthority(req tables.SysAuthority) (err error, res tables.SysAuthority) {
 	err = global.GVA_DB.Where("authority_id = ?", req.AuthorityId).First(&tables.SysAuthority{}).Updates(&req).Error
 	return err, req
+}
+
+// 设置角色资源权限
+
+func (a *AuthorityService) SetDataAuthority(props tables.SysAuthority) error {
+	var s tables.SysAuthority
+	global.GVA_DB.Preload("AuthorityIdList").First(&s, "authority_id = ?", props.AuthorityId)
+	err := global.GVA_DB.Model(&s).Association("AuthorityIdList").Replace(&props.AuthorityIdList)
+	return err
 }
