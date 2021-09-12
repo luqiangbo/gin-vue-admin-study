@@ -1,9 +1,11 @@
 package system
 
 import (
+	"errors"
 	"go-class/global"
 	commonReq "go-class/model/common/request"
 	"go-class/model/system/tables"
+	"gorm.io/gorm"
 	"strconv"
 )
 
@@ -90,5 +92,82 @@ func (m *MenuService) AddMenuAuthority(menus []tables.SysBaseMenu, authorityId s
 	authNew.AuthorityId = authorityId
 	authNew.BaseMenuList = menus
 	err = AuthorityServiceApp.SetMenuAuthority(&authNew)
+	return err
+}
+
+// 增加 菜单
+
+func (m *MenuService) AddBaseMenu(param tables.SysBaseMenu) error {
+	if !errors.Is(global.GVA_DB.Where("name = ?", param.Name).First(&tables.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
+		return errors.New("存在重复的name, 请修改name")
+	}
+	return global.GVA_DB.Create(&param).Error
+}
+
+// 删 菜单
+
+func (d *MenuService) DeleteBaseMenu(id float64) (err error) {
+	err = global.GVA_DB.Preload("Parameters").Where("parent_id = ?", id).First(&tables.SysBaseMenu{}).Error
+	if err != nil {
+		var menu tables.SysBaseMenu
+		db := global.GVA_DB.Preload("AuthorityList").Where("id = ?", id).First(&menu).Delete(&menu)
+		if len(menu.AuthorityList) > 0 {
+			err = global.GVA_DB.Model(&menu).Association("AuthorityList").Delete(&menu.AuthorityList)
+		} else {
+			err = db.Error
+		}
+	} else {
+		return errors.New("此裁断存在子菜单不可删除")
+	}
+	return err
+}
+
+// 改 菜单
+
+func (d *MenuService) UpdateBaseMenu(param tables.SysBaseMenu) (err error) {
+	var oldMenu tables.SysBaseMenu
+	updateMap := make(map[string]interface{})
+	updateMap["keep_alive"] = param.KeepAlive
+	updateMap["close_tab"] = param.CloseTab
+	updateMap["default_menu"] = param.DefaultMenu
+	updateMap["parent_id"] = param.ParentId
+	updateMap["path"] = param.Path
+	updateMap["name"] = param.Name
+	updateMap["hidden"] = param.Hidden
+	updateMap["component"] = param.Component
+	updateMap["title"] = param.Title
+	updateMap["icon"] = param.Icon
+	updateMap["sort"] = param.Sort
+
+	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		db := tx.Where("id = ?", param.ID).Find(&oldMenu)
+		if oldMenu.Name != param.Name {
+			if !errors.Is(tx.Where("id <> ? AND name = ?", param.ID, param.Name).First(&tables.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
+				global.GVA_LOG.Debug("存在相同name修改失败")
+				return errors.New("存在相同name修改失败")
+			}
+		}
+		txErr := tx.Unscoped().Delete(&tables.SysBaseMenuParameter{}, "sys_base_menu_id = ?", param.ID).Error
+		if txErr != nil {
+			global.GVA_LOG.Debug(txErr.Error())
+			return txErr
+		}
+		if len(param.Parameters) > 0 {
+			for k := range param.Parameters {
+				param.Parameters[k].SysBaseMenuID = param.ID
+			}
+			txErr = tx.Create(&param.Parameters).Error
+			if txErr != nil {
+				global.GVA_LOG.Debug(txErr.Error())
+				return txErr
+			}
+		}
+		txErr = db.Updates(updateMap).Error
+		if txErr != nil {
+			global.GVA_LOG.Debug(txErr.Error())
+			return txErr
+		}
+		return nil
+	})
 	return err
 }

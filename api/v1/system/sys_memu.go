@@ -74,3 +74,63 @@ func (a *AuthorityMenuApi) AddMenuAuthority(c *gin.Context) {
 	}
 
 }
+
+// 增 菜单
+
+func (m *AuthorityMenuApi) AddBaseMenu(c *gin.Context) {
+	var req tables.SysBaseMenu
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.MenuVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := utils.Verify(req.Meta, utils.MenuMetaVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := menuDbService.AddBaseMenu(req); err != nil {
+		global.GVA_LOG.Error("添加失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("添加失败", c)
+
+	} else {
+		commonRes.OkWithMessage("添加成功", c)
+	}
+}
+
+// 删 菜单
+
+func (m *AuthorityMenuApi) DeleteBaseMenu(c *gin.Context) {
+	var req commonReq.GetById
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.IdVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := menuDbService.DeleteBaseMenu(req.ID); err != nil {
+		global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("删除失败", c)
+	} else {
+		commonRes.OkWithMessage("删除成功", c)
+	}
+}
+
+// 改 菜单
+
+func (m *AuthorityMenuApi) UpdateBaseMenu(c *gin.Context) {
+	var req tables.SysBaseMenu
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.MenuVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := utils.Verify(req.Meta, utils.MenuMetaVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := menuDbService.UpdateBaseMenu(req); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("更新失败", c)
+	} else {
+		commonRes.OkWithMessage("更新成功", c)
+	}
+}
