@@ -134,3 +134,20 @@ func (m *AuthorityMenuApi) UpdateBaseMenu(c *gin.Context) {
 		commonRes.OkWithMessage("更新成功", c)
 	}
 }
+
+// 通过id 获取菜单详情
+
+func (m *AuthorityMenuApi) GetBaseMenuById(c *gin.Context) {
+	var req commonReq.GetById
+	_ = c.ShouldBindJSON(&req)
+	if err := utils.Verify(req, utils.IdVerify); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err, res := menuDbService.GetBaseMenuById(req.ID); err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("获取失败", c)
+	} else {
+		commonRes.OkWithDetailed(modelSystemRes.SysBaseMenuResponse{Menu: res}, "获取成功", c)
+	}
+}

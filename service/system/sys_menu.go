@@ -171,3 +171,10 @@ func (d *MenuService) UpdateBaseMenu(param tables.SysBaseMenu) (err error) {
 	})
 	return err
 }
+
+// 通过id获取菜单详情
+
+func (d *MenuService) GetBaseMenuById(id float64) (err error, res tables.SysBaseMenu) {
+	err = global.GVA_DB.Preload("Parameters").Where("id = ?", id).First(&res).Error
+	return
+}

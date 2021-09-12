@@ -11,5 +11,5 @@ type SysBaseMenusResponse struct {
 }
 
 type SysBaseMenuResponse struct {
-	Menu []tables.SysBaseMenu `json:"menu"`
+	Menu tables.SysBaseMenu `json:"menu"`
 }
