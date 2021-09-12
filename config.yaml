@@ -18,13 +18,13 @@ jwt:
   expires-time: 604800
   buffer-time: 86400
 mysql:
-  path: ''
-  config: ''
-  db-name: ''
-  username: ''
-  password: ''
-  max-idle-conns: 10
-  max-open-conns: 100
+  path: 104.128.94.5:3306
+  config: charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai
+  db-name: jjj
+  username: root
+  password: Aa123456
+  max-idle-conns: 0
+  max-open-conns: 0
   log-mode: false
   log-zap: ""
 redis:

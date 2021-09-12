@@ -2,7 +2,7 @@ package source
 
 import (
 	"github.com/gookit/color"
-	"go-class/global"
+	"gin-vue-admin-study/global"
 	"gorm.io/gorm"
 )
 

@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"go-class/global"
-	"go-class/initialize/internal"
-	"go-class/model/system/tables"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/initialize/internal"
+	"gin-vue-admin-study/model/system/tables"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

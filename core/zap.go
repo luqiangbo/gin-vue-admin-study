@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
-	"go-class/global"
-	"go-class/utils"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"

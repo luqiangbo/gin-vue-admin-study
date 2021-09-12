@@ -1,6 +1,6 @@
 package router
 
-import "go-class/router/system"
+import "gin-vue-admin-study/router/system"
 
 type RouterGroup struct {
 	System system.RouterGroup

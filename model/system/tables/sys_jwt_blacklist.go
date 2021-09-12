@@ -1,6 +1,6 @@
 package tables
 
-import "go-class/global"
+import "gin-vue-admin-study/global"
 
 type JwtBlacklist struct {
 	global.GVA_MODEL

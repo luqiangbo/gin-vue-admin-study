@@ -1,9 +1,9 @@
 package main
 
 import (
-	"go-class/core"
-	"go-class/global"
-	"go-class/initialize"
+	"gin-vue-admin-study/core"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/initialize"
 )
 
 func main() {

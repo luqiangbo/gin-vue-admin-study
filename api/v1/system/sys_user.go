@@ -5,14 +5,14 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
-	"go-class/global"
-	"go-class/middleware"
-	commonReq "go-class/model/common/request"
-	commonRes "go-class/model/common/response"
-	modelSystemRequest "go-class/model/system/request"
-	"go-class/model/system/response"
-	"go-class/model/system/tables"
-	"go-class/utils"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/middleware"
+	commonReq "gin-vue-admin-study/model/common/request"
+	commonRes "gin-vue-admin-study/model/common/response"
+	modelSystemRequest "gin-vue-admin-study/model/system/request"
+	"gin-vue-admin-study/model/system/response"
+	"gin-vue-admin-study/model/system/tables"
+	"gin-vue-admin-study/utils"
 	"go.uber.org/zap"
 	"time"
 )
@@ -188,6 +188,7 @@ func (b *BaseApi) SetUserAuthority(c *gin.Context) {
 
 // SetUserAuthorities
 // 设置用户权限
+
 func (b *BaseApi) SetUserAuthorities(c *gin.Context) {
 	var req modelSystemRequest.SetUserAuthorities
 	_ = c.ShouldBindJSON(&req)
@@ -221,6 +222,8 @@ func (b *BaseApi) DeleteUser(c *gin.Context) {
 	}
 }
 
+// 更新用户信息
+
 func (b *BaseApi) Info(c *gin.Context) {
 	var req tables.SysUser
 	_ = c.ShouldBindJSON(&req)
@@ -233,5 +236,17 @@ func (b *BaseApi) Info(c *gin.Context) {
 		commonRes.FailWithMessage("设置失败!", c)
 	} else {
 		commonRes.OkWithDetailed(gin.H{"user_info": res}, "设置成功", c)
+	}
+}
+
+// 获取自身信息
+
+func (b *BaseApi) GetUserInfo(c *gin.Context) {
+	uuid := utils.GetUserUuid(c)
+	if err, res := userService.GetUserInfo(uuid); err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
+		commonRes.FailWithMessage("获取失败", c)
+	} else {
+		commonRes.OkWithDetailed(gin.H{"user_info": res}, "获取成功", c)
 	}
 }

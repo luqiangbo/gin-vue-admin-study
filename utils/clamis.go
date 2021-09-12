@@ -3,8 +3,8 @@ package utils
 import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
-	"go-class/global"
-	"go-class/model/system/request"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/model/system/request"
 )
 
 func GetUserId(c *gin.Context) uint {

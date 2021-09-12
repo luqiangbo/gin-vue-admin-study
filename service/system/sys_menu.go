@@ -2,9 +2,9 @@ package system
 
 import (
 	"errors"
-	"go-class/global"
-	commonReq "go-class/model/common/request"
-	"go-class/model/system/tables"
+	"gin-vue-admin-study/global"
+	commonReq "gin-vue-admin-study/model/common/request"
+	"gin-vue-admin-study/model/system/tables"
 	"gorm.io/gorm"
 	"strconv"
 )

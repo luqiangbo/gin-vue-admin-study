@@ -2,8 +2,8 @@ package system
 
 import (
 	"github.com/gin-gonic/gin"
-	v1 "go-class/api/v1"
-	"go-class/middleware"
+	v1 "gin-vue-admin-study/api/v1"
+	"gin-vue-admin-study/middleware"
 )
 
 type UserRouter struct {
@@ -19,6 +19,6 @@ func (s *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 		userRouter.PUT("info", baseApi.Info)                                // 更新用户信息
 		userRouter.POST("set_user_authority", baseApi.SetUserAuthority)     // 更改用户权限
 		userRouter.POST("set_user_authorities", baseApi.SetUserAuthorities) // 设置用户权限
-
+		userRouter.GET("get_user_info", baseApi.GetUserInfo)                // 获取自身信息
 	}
 }

@@ -2,7 +2,7 @@ package utils
 
 import (
 	zaprotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	"go-class/global"
+	"gin-vue-admin-study/global"
 	"go.uber.org/zap/zapcore"
 	"os"
 	"path"

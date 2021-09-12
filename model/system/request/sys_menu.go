@@ -1,8 +1,8 @@
 package request
 
 import (
-	"go-class/global"
-	"go-class/model/system/tables"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/model/system/tables"
 )
 
 type AddMenuAuthorityInfo struct {

@@ -2,8 +2,8 @@ package system
 
 import (
 	"github.com/gin-gonic/gin"
-	v1 "go-class/api/v1"
-	"go-class/middleware"
+	v1 "gin-vue-admin-study/api/v1"
+	"gin-vue-admin-study/middleware"
 )
 
 type AuthorityRouter struct {

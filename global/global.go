@@ -3,7 +3,7 @@ package global
 import (
 	"github.com/go-redis/redis"
 	"github.com/spf13/viper"
-	"go-class/config"
+	"gin-vue-admin-study/config"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )

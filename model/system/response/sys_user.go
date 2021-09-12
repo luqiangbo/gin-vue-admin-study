@@ -1,7 +1,7 @@
 package response
 
 import (
-	"go-class/model/system/tables"
+	"gin-vue-admin-study/model/system/tables"
 )
 
 type SysUserResponse struct {

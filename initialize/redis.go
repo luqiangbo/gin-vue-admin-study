@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"github.com/go-redis/redis"
-	"go-class/global"
+	"gin-vue-admin-study/global"
 	"go.uber.org/zap"
 )
 

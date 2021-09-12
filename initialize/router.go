@@ -2,8 +2,8 @@ package initialize
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-class/middleware"
-	"go-class/router"
+	"gin-vue-admin-study/middleware"
+	"gin-vue-admin-study/router"
 )
 
 // 初始化路由

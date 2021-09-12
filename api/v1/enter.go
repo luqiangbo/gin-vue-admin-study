@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"go-class/api/v1/system"
+	"gin-vue-admin-study/api/v1/system"
 )
 
 type ApiGroup struct {

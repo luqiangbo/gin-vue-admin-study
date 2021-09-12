@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
-	"go-class/global"
-	"go-class/initialize"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/initialize"
 )
 
 func RunWindowsServer() {

@@ -2,9 +2,9 @@ package system
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-class/global"
-	modelCommonRes "go-class/model/common/response"
-	modelSystemReq "go-class/model/system/request"
+	"gin-vue-admin-study/global"
+	modelCommonRes "gin-vue-admin-study/model/common/response"
+	modelSystemReq "gin-vue-admin-study/model/system/request"
 	"go.uber.org/zap"
 )
 

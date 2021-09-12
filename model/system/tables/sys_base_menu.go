@@ -1,7 +1,7 @@
 package tables
 
 import (
-	"go-class/global"
+	"gin-vue-admin-study/global"
 )
 
 type SysBaseMenu struct {

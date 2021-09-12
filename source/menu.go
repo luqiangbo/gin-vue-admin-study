@@ -2,8 +2,8 @@ package source
 
 import (
 	"github.com/gookit/color"
-	"go-class/global"
-	"go-class/model/system/tables"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/model/system/tables"
 	"gorm.io/gorm"
 	"time"
 )

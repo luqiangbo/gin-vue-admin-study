@@ -1,6 +1,6 @@
 package tables
 
-import "go-class/global"
+import "gin-vue-admin-study/global"
 import "github.com/satori/go.uuid"
 
 type SysUser struct {

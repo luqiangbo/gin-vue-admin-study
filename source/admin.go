@@ -3,8 +3,8 @@ package source
 import (
 	"github.com/gookit/color"
 	uuid "github.com/satori/go.uuid"
-	"go-class/global"
-	"go-class/model/system/tables"
+	"gin-vue-admin-study/global"
+	"gin-vue-admin-study/model/system/tables"
 	"gorm.io/gorm"
 	"time"
 )
