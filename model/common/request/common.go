@@ -12,3 +12,7 @@ type GetById struct {
 type IdsReq struct {
 	Ids []int `json:"ids"`
 }
+
+type GetAuthorityId struct {
+	AuthorityId string `json:"authority_id" form:"authority_id"`
+}

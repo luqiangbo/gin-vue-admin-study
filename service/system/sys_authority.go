@@ -94,3 +94,12 @@ func (a *AuthorityService) SetDataAuthority(props tables.SysAuthority) error {
 	err := global.GVA_DB.Model(&s).Association("AuthorityIdList").Replace(&props.AuthorityIdList)
 	return err
 }
+
+// 菜单与角色绑定
+
+func (a *AuthorityService) SetMenuAuthority(param *tables.SysAuthority) error {
+	var s tables.SysAuthority
+	global.GVA_DB.Preload("BaseMenuList)").First(&s, "authority_id = ?", param.AuthorityId)
+	err := global.GVA_DB.Model(&s).Association("BaseMenuList").Replace(&param.BaseMenuList)
+	return err
+}
