@@ -6,4 +6,5 @@ type ServiceGroup struct {
 	OperationRecordService
 	UserService
 	InitDBService
+	MenuService
 }

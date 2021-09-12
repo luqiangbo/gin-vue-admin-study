@@ -26,6 +26,7 @@ func Routers() *gin.Engine {
 	{
 		systemRouter.InitUserRouter(PrivateGroup)      // 注册功能api路由
 		systemRouter.InitAuthorityRouter(PrivateGroup) // 权限
+		systemRouter.InitMenuRouter(PrivateGroup)      //
 	}
 	return Router
 }

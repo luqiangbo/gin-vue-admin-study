@@ -63,11 +63,12 @@ func (b *BaseApi) tokenNext(c *gin.Context, user tables.SysUser) {
 	j := &middleware.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)}
 
 	claims := modelSystemRequest.CustomClaims{
-		UUID:       user.UUID,
-		ID:         user.ID,
-		NickName:   user.NickName,
-		Username:   user.Username,
-		BufferTime: global.GVA_CONFIG.JWT.BufferTime,
+		UUID:        user.UUID,
+		ID:          user.ID,
+		NickName:    user.NickName,
+		Username:    user.Username,
+		AuthorityId: user.AuthorityId,
+		BufferTime:  global.GVA_CONFIG.JWT.BufferTime,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix() - 1000,                              // 签名生效时间
 			ExpiresAt: time.Now().Unix() + global.GVA_CONFIG.JWT.ExpiresTime, // 过期时间 7天  配置文件

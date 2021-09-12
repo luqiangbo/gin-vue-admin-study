@@ -79,10 +79,10 @@ type JWT struct {
 }
 
 var (
-	TokenExpired     = errors.New("Token is expired")
-	TokenNotValidYet = errors.New("Token not active yet")
-	TokenMalformed   = errors.New("That's not even a token")
-	TokenInvalid     = errors.New("Couldn't handle this token:")
+	TokenExpired     = errors.New("令牌已过期 Token is expired")
+	TokenNotValidYet = errors.New("令牌尚未激活 Token not active yet")
+	TokenMalformed   = errors.New("这甚至不是令牌 That's not even a token")
+	TokenInvalid     = errors.New("无法处理此令牌 Couldn't handle this token:")
 )
 
 func NewJWT() *JWT {
